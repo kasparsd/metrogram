@@ -70,11 +70,11 @@ var metrogram = angular.module(
 
 			$scope.makeActiveSlide = function( index ) {
 				// Inactivate the previous slide
-				delete $scope.images[ $scope.imgCurrent ].activeClass;
+				delete $scope.images[ $scope.imgCurrent ].isActive;
 				// Select the next slide
 				$scope.imgCurrent = ( index ) % $scope.images.length;
 				// Activate the next slide
-				$scope.images[ $scope.imgCurrent ].activeClass = 'active';
+				$scope.images[ $scope.imgCurrent ].isActive = true;
 			}
 
 			$scope.tagChange = function() {

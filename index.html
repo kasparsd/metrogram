@@ -18,7 +18,7 @@
 	</h1>
 
 	<ul id="slides">
-		<li ng-repeat="image in images" class="slide" ng-class="image.activeClass">
+		<li ng-repeat="image in images" class="slide" ng-class="{ active : image.isActive }">
 			<figure>
 				<img ng-src="{{ image.images.standard_resolution.url }}" class="image" />
 			</figure>
