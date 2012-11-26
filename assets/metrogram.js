@@ -5,15 +5,25 @@
 
 var metrogram = angular.module(
 		'metrogram', []
-	).controller(
-		'slideshow', function ( $scope, $http, $timeout ) {
+	).config(
+		['$routeProvider', '$locationProvider', function( $routeProvider, $locationProvider ) {
+			$routeProvider.when('/tag/:tag');
+		}]
+  	).controller(
+		'slideshow', function ( $scope, $http, $timeout, $route, $location ) {
 			// Set the API endpoint
 			var api = 'https://api.instagram.com/v1/tags/%tag%/media/recent?access_token=257058201.9af4692.3d68e63b114944a0be332da732923a23&callback=JSON_CALLBACK',
 				newReq, refreshApi;
-			
+
 			$scope.fetchImages = function() {
+				
 				$scope.loadingClass = 'loading';
 				$scope.imgCurrent = 0;
+
+				if ( ! $route.current )
+					$location.path( '/tag/' + $scope.tag );
+				else if ( angular.isDefined( $route.current.params.tag ) )
+					$scope.tag = $route.current.params.tag;
 
 				$http.jsonp( 
 					api.replace( '%tag%', $scope.tag )
@@ -68,6 +78,8 @@ var metrogram = angular.module(
 			}
 
 			$scope.tagChange = function() {
+				$location.path( '/tag/' + $scope.tag );
+
 				if ( newReq )
 					$timeout.cancel( newReq );
 
