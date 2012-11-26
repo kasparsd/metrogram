@@ -11,55 +11,57 @@ var metrogram = angular.module(
 			var api = 'https://api.instagram.com/v1/tags/%tag%/media/recent?access_token=257058201.9af4692.3d68e63b114944a0be332da732923a23&callback=JSON_CALLBACK',
 				newReq, refreshApi;
 			
-			function fetchImages() {
+			$scope.fetchImages = function() {
 				$scope.loadingClass = 'loading';
 
 				$http.jsonp( 
 					api.replace( '%tag%', $scope.tag )
 				).success( function( data ) {
 					delete $scope.loadingClass;
-
+					
 					$scope.images = data.data;
 
+					// Set the first image active
+					$scope.makeActiveSlide( $scope.imgCurrent );
+
+					// Cancel the previous fetch request
 					if ( refreshApi )
 						$timeout.cancel( refreshApi );
 
-					refreshApi = $timeout( fetchImages, 6000 * data.data.length );
+					refreshApi = $timeout( $scope.fetchImages, 6000 * data.data.length );
 				});
 			}
 
 			// Check for new images on every loop
-			$timeout( fetchImages );
+			$timeout( $scope.fetchImages );
 
-			function advanceSlide() {
-				/*
+			$scope.advanceSlide = function() {
 				// Method 1
 				// Use a classname to highlight the current active slide
-				if ( $scope.images ) {
-					// Hide the current slide
-					if ( $scope.images[ current ].active )
-						delete $scope.images[ current ].active;
+				if ( angular.isDefined( $scope.images ) )
+					$scope.makeActiveSlide( $scope.imgCurrent + 1 );
 
-					// Choose the next slide
-					if ( current < $scope.images.length )
-						++current;	
-					else
-						current = 0;
-
-					$scope.images[ current ].active = 'active';
-				}
-				*/
-
+				/*
 				// Method 2
-				// The Angular way -- just flush the array elements around
+				// Just flush the array elements around
 				if ( angular.isDefined( $scope.images ) )
 					$scope.images.push( $scope.images.shift() );
+				*/
 
-				$timeout( advanceSlide, 6000 );
+				$timeout( $scope.advanceSlide, 6000 );
 			}
 
 			// Advance slides
-			$timeout( advanceSlide );
+			$timeout( $scope.advanceSlide );
+
+			$scope.makeActiveSlide = function( index ) {
+				// Inactivate the previous slide
+				delete $scope.images[ $scope.imgCurrent ].activeClass;
+				// Select the next slide
+				$scope.imgCurrent = ( index ) % $scope.images.length;
+				// Activate the next slide
+				$scope.images[ $scope.imgCurrent ].activeClass = 'active';
+			}
 
 			$scope.tagChange = function() {
 				if ( newReq )
