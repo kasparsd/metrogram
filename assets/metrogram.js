@@ -74,7 +74,7 @@ var metrogram = angular.module(
 				newReq = $timeout( function() {
 					$scope.fetchImages();
 					$timeout.cancel( newReq );
-				}, 500);
+				}, 1000);
 			}
 		}
 	).filter(
