@@ -11,7 +11,7 @@
 	<script src="assets/angular.min.js"></script>
 	<script src="assets/metrogram.js"></script>
 </head>
-<body ng-controller="slideshow" ng-class="loadingClass" ng-init="imgCurrent = 0">
+<body ng-controller="slideshow" ng-class="loadingClass">
 	<h1>
 		<img src="assets/instagram-logo.png" /> 
 		#<input type="text" ng-model="tag" ng-change="tagChange()" ng-init="tag = 'metronetlife'" size="{{ tag.length }}" />
