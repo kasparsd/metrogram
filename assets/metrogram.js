@@ -13,32 +13,36 @@ var metrogram = angular.module(
 			
 			$scope.fetchImages = function() {
 				$scope.loadingClass = 'loading';
+				$scope.imgCurrent = 0;
 
 				$http.jsonp( 
 					api.replace( '%tag%', $scope.tag )
 				).success( function( data ) {
 					delete $scope.loadingClass;
-					
+
 					$scope.images = data.data;
 
 					// Set the first image active
-					$scope.makeActiveSlide( $scope.imgCurrent );
+					if ( data.data.length )
+						$scope.makeActiveSlide( $scope.imgCurrent );
 
-					// Cancel the previous fetch request
+					// Cancel the previous update request
 					if ( refreshApi )
 						$timeout.cancel( refreshApi );
 
-					refreshApi = $timeout( $scope.fetchImages, 6000 * data.data.length );
+					// Check for new images on every loop
+					if ( data.data.length )
+						refreshApi = $timeout( $scope.fetchImages, 6000 * data.data.length );
 				});
 			}
 
-			// Check for new images on every loop
+			// Fetch images
 			$timeout( $scope.fetchImages );
 
 			$scope.advanceSlide = function() {
 				// Method 1
 				// Use a classname to highlight the current active slide
-				if ( angular.isDefined( $scope.images ) )
+				if ( angular.isDefined( $scope.images ) && $scope.images.length )
 					$scope.makeActiveSlide( $scope.imgCurrent + 1 );
 
 				/*
@@ -68,7 +72,7 @@ var metrogram = angular.module(
 					$timeout.cancel( newReq );
 
 				newReq = $timeout( function() {
-					fetchImages();
+					$scope.fetchImages();
 					$timeout.cancel( newReq );
 				}, 500);
 			}
