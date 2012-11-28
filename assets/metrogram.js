@@ -43,6 +43,9 @@ var metrogram = angular.module(
 					// Check for new images on every loop
 					if ( data.data.length )
 						refreshApi = $timeout( $scope.fetchImages, 6000 * data.data.length );
+				}).error( function() {
+					delete $scope.loadingClass;
+					refreshApi = $timeout( $scope.fetchImages, 2000 );
 				});
 			}
 
